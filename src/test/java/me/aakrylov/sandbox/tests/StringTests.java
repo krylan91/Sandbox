@@ -3,6 +3,8 @@ package me.aakrylov.sandbox.tests;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,5 +78,18 @@ class StringTests {
         String cityName = agentName.substring(indexOfCountryCode + 3).trim();
 
         assertThat(cityName).isEqualTo("Amsterdam");
+    }
+
+    @Test
+    void shouldReturnCountryCode() {
+        String agentName = "Access to Internet IT Milan";
+        String countryCode = null;
+        Pattern pattern = Pattern.compile("\\s+([A-Z]{2})\\s");
+        Matcher matcher = pattern.matcher(agentName);
+        while (matcher.find()) {
+            countryCode = matcher.group(1);
+        }
+
+        assertThat(countryCode).isEqualTo("IT");
     }
 }

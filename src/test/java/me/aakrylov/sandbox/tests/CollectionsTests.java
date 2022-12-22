@@ -1,12 +1,14 @@
 package me.aakrylov.sandbox.tests;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -68,8 +70,30 @@ class CollectionsTests {
     }
 
     @Test
-    void queueTest() {
-        Queue<String> queue = new LinkedList<>();
+    void shouldThrowConcurrentModificationException() {
+        List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
 
+        assertThrows(ConcurrentModificationException.class, () -> {
+        for (String value: list) {
+            if (value.equals("a")) {
+                list.remove(value);
+            }
+        }
+        });
+    }
+
+    @Test
+    void shouldModifyCollection() {
+        List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+
+        Iterator<String> iter = list.listIterator();
+        while (iter.hasNext()) {
+            String value = iter.next();
+            if (value.equals("a")) {
+                iter.remove();
+            }
+        }
+
+        assertThat(list).containsExactly("b", "c");
     }
 }
